@@ -1,2 +1,2 @@
 # aws-realtime-streaming
-❄️Stream real-time data into Snowflake with Amazon Kinesis Firehose
+❄️Stream real-time tweets into Snowflake with Amazon Kinesis Firehose!
