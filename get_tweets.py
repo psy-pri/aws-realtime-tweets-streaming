@@ -9,6 +9,7 @@ import tweepy
 import os
 from dotenv import load_dotenv
 import boto3
+import json
 
 #load environment variables
 load_dotenv()
@@ -34,16 +35,19 @@ def sendDataToStream(data):
     """
     This function will send tweets to 
     Kinesis firehose stream
-    :param data: stream of tweets
+    :param data: stream of tweets of type bytes
     :return response: dict object
     """
+    delimiter = "\n"
+    data = data.decode('utf8').replace("'", '"')
     response = kinesis_client.put_record(
         DeliveryStreamName = 'PUT-S3-sTkYd',
         Record = {
-            'Data':bytes(str(data).encode("utf-8"))
+            "Data":json.dumps(data) + delimiter
         }
     )
     return response
+
 
 auth = tweepy.OAuth1UserHandler(consumer_key=api_key,consumer_secret=api_key_secret,
         access_token=access_token,access_token_secret=access_token_secret)
@@ -72,6 +76,10 @@ class MyStream(tweepy.StreamingClient):
         try:
             print("Data fetched successfully",data[0])
             response = sendDataToStream(data)
+            # data = data.decode('utf-8') 
+            # data = {"data": data.decode('utf-8')}
+            # with open('request.txt', 'w') as file:
+            #     json.dump(data, file) + ","
         except BaseException as e:
             print("Error on_data %s" % str(e))
         return True
