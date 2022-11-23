@@ -15,7 +15,8 @@ create database if not exists twitter_stream;
 use twitter_stream.public;
 
 create or replace table twitter_stream.public.tweets(
-    tweet variant
+    tweet variant,
+    etl_load_ts timestamp_ntz default current_timestamp 
 );
 
 --create external stage to S3 bucket
